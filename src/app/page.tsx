@@ -1,101 +1,132 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import URL from 'url-parse';
+import ExcelExport from 'export-xlsx';
+
+export const SETTINGS_FOR_EXPORT = {
+  fileName: 'example',
+  workSheets: [
+    {
+      sheetName: 'example',
+      startingRowNumber: 2,
+      tableSettings: {
+        table1: {
+          tableTitle: "Score",
+          headerDefinition: [
+            {
+              name: 'Name',
+              key: 'name',
+            },
+            {
+              name: 'Origin URL',
+              key: 'url',
+            },
+            {
+              name: 'Product Link',
+              key: 'product_link',
+            },
+            {
+              name: 'Shop Id',
+              key: 'idx',
+            },
+            {
+              name: 'Product Id',
+              key: 'ext',
+            },
+          ],
+        }
+      }
+    },
+  ],
+};
+
+type XItem = {
+  url: string;
+  name: string;
+  idx: string;
+  ext: string;
+  product_link: string;
+}
+
+const Home = () => {
+  const [list, setList] = useState<XItem[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleURL = () => {
+    if (!searchTerm.trim()) return;
+    const url = new URL(searchTerm);
+    const paths = url.pathname.split(".");
+
+    const newItem = {
+      url: url.href,
+      name: decodeURIComponent(paths.length > 0? paths[0]: "").replace("/", ""),
+      idx: paths.length >= 3? paths[paths.length - 2]: "",
+      ext: paths.length >= 3? paths[paths.length - 1]: "",
+    } as XItem;
+
+    newItem.product_link = `https://shopee.vn/product/${newItem.idx}/${newItem.ext}`;
+
+    setList(list.concat(newItem));
+    setSearchTerm("");
+  }
+
+  const handleClear = () => {
+    setSearchTerm("");
+  }
+
+  const handleExport = () => {
+    const data = [
+      {
+        table1: list
+      }
+    ];
+    
+    const excelExport = new ExcelExport();
+    excelExport.downloadExcel(SETTINGS_FOR_EXPORT, data);
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className="flex flex-col items-center p-4">
+      <div className="w-full max-w-md flex">
+        <Input 
+          type="text"
+          placeholder="Input a URL..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}/>
+        <Button className="ml-2" onClick={handleURL}>Add</Button>
+        <Button className="ml-2" onClick={handleClear}>Clear</Button>
+        <Button className="ml-2" onClick={handleExport}>Export Excel</Button>
+      </div>
+      <div className="w-full max-w-4xl mt-8">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border-b">Origin URL</th>
+              <th className="px-4 py-2 border-b">Parse URL</th>
+              <th className="px-4 py-2 border-b">Id Shop</th>
+              <th className="px-4 py-2 border-b">ID San Pham</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((item, index) => (
+              <tr key={index}>
+                <td className="px-4 py-2 border-b">
+                  <a href={item.url} target="_blank" rel="noreferrer">{item.name}</a>
+                </td>
+                <td className="px-4 py-2 border-b">
+                  <a href={item.product_link} target="_blank" rel="noreferrer">{item.product_link}</a>
+                </td>
+                 <td className="px-4 py-2 border-b">{item.idx}</td>
+                <td className="px-4 py-2 border-b">{item.ext}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+export default Home;
