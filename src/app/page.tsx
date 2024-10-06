@@ -6,15 +6,13 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import URL from 'url-parse';
 
-export const SETTINGS_FOR_EXPORT = {
-  fileName: 'example',
+const SETTINGS_FOR_EXPORT = {
+  fileName: 'Shopee export',
   workSheets: [
     {
-      sheetName: 'example',
-      startingRowNumber: 2,
+      sheetName: 'Shopee export',
       tableSettings: {
         table1: {
-          tableTitle: "Score",
           headerDefinition: [
             {
               name: 'Name',
