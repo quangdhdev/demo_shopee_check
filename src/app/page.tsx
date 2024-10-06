@@ -7,12 +7,14 @@ import { useState } from "react";
 import URL from 'url-parse';
 
 const SETTINGS_FOR_EXPORT = {
-  fileName: 'Shopee export',
+  fileName: 'example',
   workSheets: [
     {
-      sheetName: 'Shopee export',
+      sheetName: 'example',
+      startingRowNumber: 2,
       tableSettings: {
         table1: {
+          tableTitle: "Shopee Check",
           headerDefinition: [
             {
               name: 'Name',
