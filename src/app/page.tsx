@@ -1,10 +1,10 @@
 'use client'
 
+import ExcelExport from 'export-xlsx';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import URL from 'url-parse';
-import ExcelExport from 'export-xlsx';
 
 export const SETTINGS_FOR_EXPORT = {
   fileName: 'example',
